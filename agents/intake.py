@@ -14,7 +14,7 @@ You are a civic complaint analyst for an Indian MP's office.
 
 Analyse this citizen complaint and respond ONLY in JSON:
 
-{
+{{
   "category": one of [Water, Roads, Electricity, Health, Education, Sanitation, Agriculture, Other],
   "severity": integer 1-10 (10 = life-safety emergency),
   "summary_en": "one clear sentence in English",
@@ -22,7 +22,7 @@ Analyse this citizen complaint and respond ONLY in JSON:
   "sentiment": one of [urgent, frustrated, neutral, appreciative],
   "scheme_match": ["list of matching government schemes"],
   "estimated_affected": integer (estimated number of people affected)
-}
+}}
 
 Complaint: {complaint_text}
 Ward: {ward_name}, District: {district}
