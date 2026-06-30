@@ -8,6 +8,9 @@ if Config.SUPABASE_URL and Config.SUPABASE_KEY:
 
 def save_complaint_to_supabase(complaint_data: dict) -> dict:
     """Save a complaint to Supabase"""
+    if Config.DEMO_MODE:
+        print("[DEMO_MODE] Simulating database save.")
+        return complaint_data
     if not supabase:
         print("⚠️ Supabase client not initialized (missing credentials). Skipping database save.")
         return {}
@@ -29,6 +32,9 @@ def save_complaint_to_supabase(complaint_data: dict) -> dict:
 
 def find_duplicate_complaints(embedding: list, ward_id: int, threshold: float = 0.80):
     """Find duplicate complaints using pgvector"""
+    if Config.DEMO_MODE:
+        print("[DEMO_MODE] Simulating duplicate check. Returning empty list.")
+        return []
     if not supabase:
         print("⚠️ Supabase client not initialized (missing credentials). Skipping duplicate check.")
         return []
