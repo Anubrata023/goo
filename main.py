@@ -45,8 +45,12 @@ class SMSWebhook(BaseModel):
     message: str
 
 # ============================================
-# Health Check
+# Root & Health Check
 # ============================================
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to JanSaath API v3.0! Visit /docs for the API documentation."}
+
 @app.get("/api/health")
 async def health_check():
     return {

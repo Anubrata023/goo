@@ -37,7 +37,7 @@ def triage_complaint(text: str) -> dict:
     Analyze text complaint using Gemini.
     Returns: category, severity, summary_en, summary_hi, etc.
     """
-    prompt = TRIAGE_PROMPT.format(complaint_text=text)
+    prompt = TRIAGE_PROMPT.replace("{complaint_text}", text)
     response = model.generate_content(prompt)
     
     # Clean response (remove markdown)
