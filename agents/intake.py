@@ -1,128 +1,134 @@
+"""
+AGENT 1: INTAKE ORCHESTRATOR
+Handles all Gemini interactions: text, voice, photo, embeddings.
+"""
+
 import json
 import google.generativeai as genai
 from config import Config
 
-# Configure Gemini (FREE via Google AI Studio)
+# Configure Gemini
 genai.configure(api_key=Config.GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-2.0-flash")
 
 # ============================================
-# TRIAGE PROMPT - From v3.0 PDF Section 2
+# TRIAGE PROMPT - Same as Day 1
 # ============================================
 TRIAGE_PROMPT = """
 You are a civic complaint analyst for an Indian MP's office.
 
-Analyse this citizen complaint and respond ONLY in JSON:
+Analyse this complaint and respond ONLY in JSON:
 
-{{
+{
   "category": one of [Water, Roads, Electricity, Health, Education, Sanitation, Agriculture, Other],
-  "severity": integer 1-10 (10 = life-safety emergency),
+  "severity": integer 1-10 (10 = most urgent),
   "summary_en": "one clear sentence in English",
   "summary_hi": "same sentence in Hindi",
   "sentiment": one of [urgent, frustrated, neutral, appreciative],
   "scheme_match": ["list of matching government schemes"],
-  "estimated_affected": integer (estimated number of people affected)
-}}
+  "estimated_affected": integer (number of people affected)
+}
 
 Complaint: {complaint_text}
-Ward: {ward_name}, District: {district}
 """
 
-def triage_complaint(complaint_text: str, ward_name: str = "Chinhat") -> dict:
-    """Call Gemini 2.0 Flash to analyze a complaint"""
-    if Config.DEMO_MODE:
-        print("[DEMO_MODE] Returning mock Gemini triage analysis.")
-        return {
-            "category": "Sanitation" if any(x in complaint_text.lower() for x in ["clean", "garbage", "trash", "waste"]) else "Water" if "water" in complaint_text.lower() else "Roads",
-            "severity": 7 if "emergency" in complaint_text.lower() or "accident" in complaint_text.lower() else 4,
-            "summary_en": f"Demo: {complaint_text[:60]}...",
-            "summary_hi": f"मॉक: {complaint_text[:60]}...",
-            "sentiment": "frustrated",
-            "scheme_match": ["Swachh Bharat Mission" if any(x in complaint_text.lower() for x in ["clean", "garbage", "trash", "waste"]) else "Jal Jeevan Mission"],
-            "estimated_affected": 30
-        }
-
-    prompt = TRIAGE_PROMPT.format(
-        complaint_text=complaint_text,
-        ward_name=ward_name,
-        district="Lucknow"
-    )
-    
+def triage_complaint(text: str) -> dict:
+    """
+    Analyze text complaint using Gemini.
+    Returns: category, severity, summary_en, summary_hi, etc.
+    """
+    prompt = TRIAGE_PROMPT.format(complaint_text=text)
     response = model.generate_content(prompt)
     
-    # Clean markdown if present
-    raw_text = response.text.strip()
-    if raw_text.startswith("```json"):
-        raw_text = raw_text[7:]
-    if raw_text.endswith("```"):
-        raw_text = raw_text[:-3]
+    # Clean response (remove markdown)
+    raw = response.text.strip()
+    if raw.startswith("```json"):
+        raw = raw[7:]
+    if raw.endswith("```"):
+        raw = raw[:-3]
     
     try:
-        return json.loads(raw_text)
+        return json.loads(raw)
     except json.JSONDecodeError:
-        # Fallback
+        # Fallback if Gemini returns invalid JSON
         return {
             "category": "Other",
             "severity": 5,
-            "summary_en": complaint_text[:100],
-            "summary_hi": complaint_text[:100],
+            "summary_en": text[:100],
+            "summary_hi": text[:100],
             "sentiment": "neutral",
             "scheme_match": [],
             "estimated_affected": 10
         }
 
-def process_voice_complaint(audio_file_path: str) -> dict:
-    """Send audio to Gemini - transcription + triage in ONE FREE CALL"""
-    if Config.DEMO_MODE:
-        return {"category": "Other", "severity": 5, "summary_en": "Mock voice complaint processed in demo mode"}
-    audio_file = genai.upload_file(audio_file_path)
-    response = model.generate_content([
-        audio_file,
-        TRIAGE_PROMPT.format(
-            complaint_text="[Audio file - listen and transcribe]",
-            ward_name="Lucknow",
-            district="Lucknow"
-        )
-    ])
-    try:
-        raw_text = response.text.strip()
-        if raw_text.startswith("```json"):
-            raw_text = raw_text[7:]
-        if raw_text.endswith("```"):
-            raw_text = raw_text[:-3]
-        return json.loads(raw_text)
-    except:
-        return {"category": "Other", "severity": 5, "summary_en": "Could not process audio"}
-
-def process_photo_complaint(image_file_path: str) -> dict:
-    """Send image to Gemini - vision analysis + triage in ONE FREE CALL"""
-    if Config.DEMO_MODE:
-        return {"category": "Other", "severity": 5, "summary_en": "Mock image complaint processed in demo mode"}
-    image_file = genai.upload_file(image_file_path)
-    response = model.generate_content([
-        image_file,
-        "Describe this image as a civic infrastructure complaint. "
-        "What is the problem? What type of infrastructure is affected? "
-        "Estimated severity 1-10. Respond in JSON."
-    ])
-    try:
-        raw_text = response.text.strip()
-        if raw_text.startswith("```json"):
-            raw_text = raw_text[7:]
-        if raw_text.endswith("```"):
-            raw_text = raw_text[:-3]
-        return json.loads(raw_text)
-    except:
-        return {"category": "Other", "severity": 5, "summary_en": "Could not process image"}
-
 def get_embedding(text: str) -> list:
-    """Get embedding vector (FREE via Google AI Studio)"""
-    if Config.DEMO_MODE:
-        print("[DEMO_MODE] Returning mock embedding vector.")
-        return [0.1] * 768
+    """
+    Get embedding vector (768 dimensions) using Google's free embedding-001 model.
+    Used for duplicate detection.
+    """
     result = genai.embed_content(
         model="models/embedding-001",
         content=text,
         task_type="semantic_similarity"
     )
     return result["embedding"]  # 768 floats
+
+def process_voice_complaint(audio_path: str) -> dict:
+    """
+    Process voice complaint: send audio to Gemini, get transcription + triage.
+    Gemini does transcription AND analysis in ONE FREE CALL.
+    """
+    audio = genai.upload_file(audio_path)
+    response = model.generate_content([
+        audio,
+        "Listen to this complaint in any Indian language. Transcribe it, "
+        "translate to English, and respond in the TRIAGE_PROMPT JSON format."
+    ])
+    raw = response.text.strip()
+    if raw.startswith("```json"):
+        raw = raw[7:]
+    if raw.endswith("```"):
+        raw = raw[:-3]
+    try:
+        return json.loads(raw)
+    except:
+        return {
+            "category": "Other",
+            "severity": 5,
+            "summary_en": "Voice complaint received",
+            "summary_hi": "आवाज शिकायत प्राप्त हुई",
+            "sentiment": "neutral",
+            "scheme_match": [],
+            "estimated_affected": 10
+        }
+
+def process_photo_complaint(image_path: str) -> dict:
+    """
+    Process photo complaint: send image to Gemini, get description + triage.
+    Gemini does vision analysis AND triage in ONE FREE CALL.
+    """
+    import PIL.Image
+    image = PIL.Image.open(image_path)
+    response = model.generate_content([
+        image,
+        "Describe this as a civic infrastructure complaint. "
+        "What is the problem? What type of infrastructure? "
+        "Respond in the TRIAGE_PROMPT JSON format with category, severity, summary_en, summary_hi."
+    ])
+    raw = response.text.strip()
+    if raw.startswith("```json"):
+        raw = raw[7:]
+    if raw.endswith("```"):
+        raw = raw[:-3]
+    try:
+        return json.loads(raw)
+    except:
+        return {
+            "category": "Other",
+            "severity": 5,
+            "summary_en": "Photo complaint received",
+            "summary_hi": "फोटो शिकायत प्राप्त हुई",
+            "sentiment": "neutral",
+            "scheme_match": [],
+            "estimated_affected": 10
+        }

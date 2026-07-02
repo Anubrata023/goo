@@ -9,7 +9,7 @@ class Config:
     
     # Supabase
     SUPABASE_URL = os.getenv("SUPABASE_URL")
-    SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+    SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
     
     # Twilio
     TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
@@ -26,7 +26,7 @@ class Config:
     @classmethod
     def validate(cls):
         """Check if all required keys are set"""
-        required = ["GEMINI_API_KEY", "SUPABASE_URL", "SUPABASE_KEY"]
+        required = ["GEMINI_API_KEY", "SUPABASE_URL", "SUPABASE_SERVICE_KEY"]
         missing = [key for key in required if not getattr(cls, key)]
         if missing:
             print(f"[WARNING] Missing environment variables: {missing}")
