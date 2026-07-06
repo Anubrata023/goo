@@ -1,0 +1,12 @@
+category,ward_type,district,population_density,actual_cost
+Water,rural,Lucknow,800,45000
+Water,rural,Lucknow,1200,52000
+Water,urban,Lucknow,5000,85000
+Roads,rural,Lucknow,600,80000
+Roads,urban,Lucknow,4000,150000
+Education,rural,Lucknow,500,200000
+Education,urban,Lucknow,3000,350000
+Health,rural,Lucknow,400,150000
+Health,urban,Lucknow,2500,250000
+Sanitation,rural,Lucknow,700,50000
+Sanitation,urban,Lucknow,3500,75000
