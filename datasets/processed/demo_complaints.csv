@@ -1,0 +1,6 @@
+phone,ward,raw_text,category,severity,summary_en,summary_hi,lat,lng
+919800000001,Chinhat,"Hamare mohalle mein handpump 3 hafte se band hai, pani nahi aa raha",Water,8,"Handpump broken in Chinhat for 3 weeks, no water","Chinhat mein handpump 3 hafte se band hai, pani nahi aa raha",26.86,80.94
+919800000002,Kakori,The school in our area has no toilets — girls are dropping out,Education,9,"School toilets missing in Kakori, girls dropping out","Kakori mein school mein toilet nahi hai, ladkiyan school chhod rahi hain",26.88,80.8
+919800000003,Sarojini Nagar,Photo of flooded road submitted - pani bhar gaya hai sadak mein,Roads,7,Flooded road in Sarojini Nagar after heavy rain,Sarojini Nagar mein sadak mein paani bhar gaya hai,26.82,80.98
+919800000004,Alambagh,"Bijli ka khamba toot gaya hai, raat ko andhera rehta hai",Electricity,6,"Electric pole broken in Alambagh, darkness at night","Alambagh mein bijli ka khamba toot gaya hai, raat ko andhera",26.78,80.92
+919800000005,Chinhat,"Mera handpump bhi kharab hai, 47 log ne report kiya - pani nahi aa raha",Water,8,Same handpump broken - 47 citizens reported - merged issue,Wahi handpump - 47 log ne report kiya - merged issue,26.86,80.94

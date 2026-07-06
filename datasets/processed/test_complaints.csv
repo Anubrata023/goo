@@ -1,0 +1,51 @@
+phone,ward,raw_text,category,severity,summary_en,summary_hi,lat,lng
+919800000001,Chinhat,"Hamare mohalle mein handpump 3 hafte se band hai, pani nahi aa raha",Water,8,"Handpump broken in Chinhat for 3 weeks, no water","Chinhat mein handpump 3 hafte se band hai, pani nahi aa raha",26.86,80.94
+919800000002,Kakori,The school in our area has no toilets — girls are dropping out,Education,9,"School toilets missing in Kakori, girls dropping out","Kakori mein school mein toilet nahi hai, ladkiyan school chhod rahi hain",26.88,80.8
+919800000003,Sarojini Nagar,Photo of flooded road submitted - pani bhar gaya hai sadak mein,Roads,7,Flooded road in Sarojini Nagar after heavy rain,Sarojini Nagar mein sadak mein paani bhar gaya hai,26.82,80.98
+919800000004,Alambagh,"Bijli ka khamba toot gaya hai, raat ko andhera rehta hai",Electricity,6,"Electric pole broken in Alambagh, darkness at night","Alambagh mein bijli ka khamba toot gaya hai, raat ko andhera",26.78,80.92
+919800000005,Chinhat,"Mera handpump bhi kharab hai, 47 log ne report kiya - pani nahi aa raha",Water,8,Same handpump broken - 47 citizens reported - merged issue,Wahi handpump - 47 log ne report kiya - merged issue,26.86,80.94
+919810000006,Hazratganj,"Handpump band hai, pani nahi aa raha",Water,8,"Handpump band hai, pani nahi aa raha in Hazratganj","Handpump band hai, pani nahi aa raha Hazratganj mein",26.841001,80.928928
+919810000007,Hazratganj,Paani ki pipeline phut gayi hai,Water,3,Paani ki pipeline phut gayi hai in Hazratganj,Paani ki pipeline phut gayi hai Hazratganj mein,26.85362,80.921271
+919810000008,Chinhat,Road ki lighting kharab hai,Roads,7,Road ki lighting kharab hai in Chinhat,Road ki lighting kharab hai Chinhat mein,26.864081,80.94245
+919810000009,Hazratganj,Vaccination nahi ho rahi,Health,6,Vaccination nahi ho rahi in Hazratganj,Vaccination nahi ho rahi Hazratganj mein,26.838818,80.943571
+919810000010,Chinhat,Footpath nahi hai,Roads,5,Footpath nahi hai in Chinhat,Footpath nahi hai Chinhat mein,26.851115,80.928613
+919810000011,Sarojini Nagar,"Handpump band hai, pani nahi aa raha",Water,6,"Handpump band hai, pani nahi aa raha in Sarojini Nagar","Handpump band hai, pani nahi aa raha Sarojini Nagar mein",26.803869,80.9939
+919810000012,Gomti Nagar,Bijli nahi aa rahi hai,Electricity,8,Bijli nahi aa rahi hai in Gomti Nagar,Bijli nahi aa rahi hai Gomti Nagar mein,26.868377,80.964993
+919810000013,Alambagh,Paani ki pipeline phut gayi hai,Water,5,Paani ki pipeline phut gayi hai in Alambagh,Paani ki pipeline phut gayi hai Alambagh mein,26.793176,80.924741
+919810000014,Sarojini Nagar,Nali band hai,Sanitation,8,Nali band hai in Sarojini Nagar,Nali band hai Sarojini Nagar mein,26.802782,80.986451
+919810000015,Sarojini Nagar,Paani ki tanki kharab hai,Water,9,Paani ki tanki kharab hai in Sarojini Nagar,Paani ki tanki kharab hai Sarojini Nagar mein,26.80404,80.971119
+919810000016,Hazratganj,Transformer jal gaya hai,Electricity,5,Transformer jal gaya hai in Hazratganj,Transformer jal gaya hai Hazratganj mein,26.844211,80.946807
+919810000017,Hazratganj,PHC mein dawai nahi hai,Health,7,PHC mein dawai nahi hai in Hazratganj,PHC mein dawai nahi hai Hazratganj mein,26.855399,80.941366
+919810000018,Kakori,Footpath nahi hai,Roads,6,Footpath nahi hai in Kakori,Footpath nahi hai Kakori mein,26.870798,80.817016
+919810000019,Hazratganj,Nali band hai,Sanitation,8,Nali band hai in Hazratganj,Nali band hai Hazratganj mein,26.842971,80.950733
+919810000020,Chinhat,Sadak mein gaddha hai,Roads,9,Sadak mein gaddha hai in Chinhat,Sadak mein gaddha hai Chinhat mein,26.852618,80.93071
+919810000021,Kakori,Saaf safai nahi hai,Sanitation,4,Saaf safai nahi hai in Kakori,Saaf safai nahi hai Kakori mein,26.886218,80.795825
+919810000022,Hazratganj,School building kharab hai,Education,5,School building kharab hai in Hazratganj,School building kharab hai Hazratganj mein,26.835585,80.9498
+919810000023,Gomti Nagar,Bijli ka meter kharab hai,Electricity,6,Bijli ka meter kharab hai in Gomti Nagar,Bijli ka meter kharab hai Gomti Nagar mein,26.885913,80.975976
+919810000024,Kakori,Rasta band hai,Roads,6,Rasta band hai in Kakori,Rasta band hai Kakori mein,26.863636,80.781885
+919810000025,Chinhat,Road ki lighting kharab hai,Roads,9,Road ki lighting kharab hai in Chinhat,Road ki lighting kharab hai Chinhat mein,26.867219,80.943856
+919810000026,Alambagh,School ka boundary wall toot gaya,Education,6,School ka boundary wall toot gaya in Alambagh,School ka boundary wall toot gaya Alambagh mein,26.781165,80.938843
+919810000027,Chinhat,PHC mein dawai nahi hai,Health,8,PHC mein dawai nahi hai in Chinhat,PHC mein dawai nahi hai Chinhat mein,26.875392,80.950035
+919810000028,Hazratganj,Bijli nahi aa rahi hai,Electricity,5,Bijli nahi aa rahi hai in Hazratganj,Bijli nahi aa rahi hai Hazratganj mein,26.847391,80.938149
+919810000029,Hazratganj,Ambulance nahi hai,Health,7,Ambulance nahi hai in Hazratganj,Ambulance nahi hai Hazratganj mein,26.860478,80.940307
+919810000030,Chinhat,Ambulance nahi hai,Health,9,Ambulance nahi hai in Chinhat,Ambulance nahi hai Chinhat mein,26.865558,80.944359
+919810000031,Kakori,Transformer jal gaya hai,Electricity,7,Transformer jal gaya hai in Kakori,Transformer jal gaya hai Kakori mein,26.89814,80.816897
+919810000032,Chinhat,Saaf safai nahi hai,Sanitation,6,Saaf safai nahi hai in Chinhat,Saaf safai nahi hai Chinhat mein,26.840779,80.957164
+919810000033,Sarojini Nagar,Sadak mein gaddha hai,Roads,4,Sadak mein gaddha hai in Sarojini Nagar,Sadak mein gaddha hai Sarojini Nagar mein,26.83512,80.997878
+919810000034,Chinhat,Hospital building kharab hai,Health,9,Hospital building kharab hai in Chinhat,Hospital building kharab hai Chinhat mein,26.842769,80.950424
+919810000035,Kakori,Footpath nahi hai,Roads,7,Footpath nahi hai in Kakori,Footpath nahi hai Kakori mein,26.866605,80.801107
+919810000036,Gomti Nagar,School building kharab hai,Education,7,School building kharab hai in Gomti Nagar,School building kharab hai Gomti Nagar mein,26.880211,80.987595
+919810000037,Hazratganj,Street light kharab hai,Electricity,8,Street light kharab hai in Hazratganj,Street light kharab hai Hazratganj mein,26.855995,80.937524
+919810000038,Gomti Nagar,School mein toilet nahi hai,Education,4,School mein toilet nahi hai in Gomti Nagar,School mein toilet nahi hai Gomti Nagar mein,26.858988,80.973523
+919810000039,Gomti Nagar,Nali band hai,Sanitation,7,Nali band hai in Gomti Nagar,Nali band hai Gomti Nagar mein,26.858809,80.96284
+919810000040,Hazratganj,Paani ki tanki kharab hai,Water,3,Paani ki tanki kharab hai in Hazratganj,Paani ki tanki kharab hai Hazratganj mein,26.866217,80.954385
+919810000041,Chinhat,Nali band hai,Sanitation,5,Nali band hai in Chinhat,Nali band hai Chinhat mein,26.866759,80.928569
+919810000042,Kakori,Vaccination nahi ho rahi,Health,7,Vaccination nahi ho rahi in Kakori,Vaccination nahi ho rahi Kakori mein,26.878907,80.811385
+919810000043,Alambagh,Sadak mein gaddha hai,Roads,3,Sadak mein gaddha hai in Alambagh,Sadak mein gaddha hai Alambagh mein,26.786359,80.914172
+919810000044,Alambagh,School mein toilet nahi hai,Education,8,School mein toilet nahi hai in Alambagh,School mein toilet nahi hai Alambagh mein,26.786138,80.925847
+919810000045,Chinhat,Teacher nahi aate,Education,9,Teacher nahi aate in Chinhat,Teacher nahi aate Chinhat mein,26.874467,80.929946
+919810000046,Kakori,Dustbin nahi hai,Sanitation,4,Dustbin nahi hai in Kakori,Dustbin nahi hai Kakori mein,26.876875,80.791142
+919810000047,Kakori,Borewell ka pump kharab hai,Water,9,Borewell ka pump kharab hai in Kakori,Borewell ka pump kharab hai Kakori mein,26.894454,80.802013
+919810000048,Chinhat,Vaccination nahi ho rahi,Health,9,Vaccination nahi ho rahi in Chinhat,Vaccination nahi ho rahi Chinhat mein,26.84059,80.923731
+919810000049,Kakori,Footpath nahi hai,Roads,6,Footpath nahi hai in Kakori,Footpath nahi hai Kakori mein,26.879254,80.814586
+919810000050,Chinhat,Footpath nahi hai,Roads,3,Footpath nahi hai in Chinhat,Footpath nahi hai Chinhat mein,26.879412,80.930608
