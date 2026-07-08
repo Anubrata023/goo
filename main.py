@@ -185,6 +185,25 @@ async def update_complaint_status(complaint_id: str, update: StatusUpdate):
         raise HTTPException(status_code=500, detail=str(e))
 
 # ============================================
+# DRAFT PROPOSAL ENDPOINT
+# ============================================
+@app.post("/api/complaints/{complaint_id}/draft")
+async def create_complaint_proposal(complaint_id: str):
+    """
+    Generate a Gemini proposal for a single complaint and draft a Google Doc.
+    """
+    try:
+        from agents.drafting import draft_proposal
+        complaint = get_complaint_by_id(complaint_id)
+        if not complaint:
+            raise HTTPException(status_code=404, detail="Complaint not found")
+        
+        result = draft_proposal(complaint)
+        return {"status": "success", "proposal": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================
 # PROJECT CONSOLIDATION ENDPOINT (HACKATHON)
 # ============================================
 @app.get("/api/projects/recommendations")

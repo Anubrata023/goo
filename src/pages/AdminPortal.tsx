@@ -13,7 +13,7 @@ export function AdminPortal() {
   const { complaints } = useRealtimeComplaints();
 
   const handleDraftProposalAll = () => {
-    const mockUrl = `https://docs.google.com/document/d/1mock-master-proposal/edit`;
+    const mockUrl = `https://docs.google.com/document/u/0/create`;
     const newWindow = window.open(mockUrl, '_blank');
     if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
       alert("Popup blocker detected! Redirecting to draft proposal in this tab...");

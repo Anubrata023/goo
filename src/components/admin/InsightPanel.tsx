@@ -41,7 +41,7 @@ export function InsightPanel({ complaint, onClose, onStatusUpdate }: InsightPane
   const handleDraftProposal = async () => {
     if (!complaint) return;
     setGenerating(true);
-    const mockUrl = `https://docs.google.com/document/d/1mock-${complaint.id}/edit`;
+    const mockUrl = `https://docs.google.com/document/u/0/create`;
     
     // Open blank tab synchronously to prevent popup blocker interception
     const newWindow = window.open('about:blank', '_blank');
