@@ -42,6 +42,52 @@ export function InsightPanel({ complaint, onClose, onStatusUpdate }: InsightPane
     }
   };
 
+  const generateClientFallbackProposal = (c: any) => {
+    const title = `PROJECT PROPOSAL: SANCTION OF URGENT DEPLOYMENT FOR ${c.category?.toUpperCase() || 'INFRASTRUCTURE'} WORKS IN WARD ${c.ward?.toUpperCase() || 'CHINHAT'}`;
+    const schemes = c.scheme_match && c.scheme_match.length > 0 
+      ? c.scheme_match.join(', ') 
+      : 'MPLADS (Member of Parliament Local Area Development Scheme)';
+    const cost = c.cost_estimate 
+      ? `₹${Number(c.cost_estimate).toLocaleString('en-IN')}` 
+      : '₹45,000';
+
+    return `PROJECT SANCTION PROPOSAL
+
+1. PROJECT TITLE:
+${title}
+
+2. BACKGROUND & PROBLEM STATEMENT:
+Grievance ID #JS-${c.id} was filed by citizens of Ward ${c.ward || 'Chinhat'} regarding a critical ${c.category || 'Infrastructure'} issue. 
+Description: "${c.raw_text}"
+The urgency score is evaluated at ${c.priority_score || 75}/100. Due to safety concerns and public demand, immediate administrative action is requested.
+
+3. PROPOSED WORKS & TECHNICAL SOLUTION:
+- Mobilization of local contract resources for immediate remediation of the reported ${c.category || 'infrastructure'} gap.
+- Quality assurance checks to be completed within 14 calendar days of project initiation.
+- Integration of status monitoring feed to report progress back to the ward community portal.
+
+4. FISCAL ESTIMATE & BUDGET BREAKDOWN:
+- Estimated Material Costs: 65%
+- Labour & Execution: 25%
+- Contingencies & Audit: 10%
+------------------------------------------
+TOTAL PROPOSED BUDGET: ${cost}
+
+5. PROPOSED FUNDING SOURCE:
+This project qualifies for funding under: ${schemes}.
+
+6. PROJECT TIMELINE:
+- Phase 1 (Site Survey & Material procurement): Week 1
+- Phase 2 (Implementation & Ground execution): Weeks 2-3
+- Phase 3 (Inspection, Verification, & Public sign-off): Week 4
+
+7. EXPECTED IMPACT:
+Remediation will directly resolve the local hazard, benefiting approximately ${c.estimated_affected || 350} residents in the immediate vicinity.
+
+8. RECOMMENDATION:
+The Member of Parliament's Office is requested to approve the budget of ${cost} from the LADS allocations to initiate works immediately.`;
+  };
+
   const handleDraftProposal = async () => {
     if (!complaint) return;
     setGenerating(true);
@@ -74,6 +120,17 @@ export function InsightPanel({ complaint, onClose, onStatusUpdate }: InsightPane
         } catch (e) {
           console.warn("Clipboard copy failed:", e);
         }
+      } else {
+        // Fallback if API returned empty proposal text
+        const fallbackText = generateClientFallbackProposal(complaint);
+        setProposalMarkdown(fallbackText);
+        try {
+          await navigator.clipboard.writeText(fallbackText);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 3000);
+        } catch (e) {
+          console.warn("Clipboard copy failed:", e);
+        }
       }
 
       if (newWindow) {
@@ -84,6 +141,18 @@ export function InsightPanel({ complaint, onClose, onStatusUpdate }: InsightPane
     } catch (error) {
       console.error(error);
       setDocUrl(mockUrl);
+      
+      // Fallback proposal text generated on client-side
+      const fallbackText = generateClientFallbackProposal(complaint);
+      setProposalMarkdown(fallbackText);
+      try {
+        await navigator.clipboard.writeText(fallbackText);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 3000);
+      } catch (e) {
+        console.warn("Clipboard copy failed:", e);
+      }
+
       if (newWindow) {
         newWindow.location.href = mockUrl;
       } else {
