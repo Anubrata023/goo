@@ -16,10 +16,14 @@ export function InsightPanel({ complaint, onClose, onStatusUpdate }: InsightPane
   const [generating, setGenerating] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [docUrl, setDocUrl] = useState<string | null>(null);
+  const [proposalMarkdown, setProposalMarkdown] = useState<string>('');
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (complaint) {
       setDocUrl(null);
+      setProposalMarkdown('');
+      setCopied(false);
     }
   }, [complaint]);
 
@@ -60,6 +64,18 @@ export function InsightPanel({ complaint, onClose, onStatusUpdate }: InsightPane
       const result = await generateProposal(complaint.id);
       const targetUrl = (result.proposal && result.proposal.doc_url) ? result.proposal.doc_url : mockUrl;
       setDocUrl(targetUrl);
+      
+      if (result.proposal && result.proposal.proposal_text) {
+        setProposalMarkdown(result.proposal.proposal_text);
+        try {
+          await navigator.clipboard.writeText(result.proposal.proposal_text);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 3000);
+        } catch (e) {
+          console.warn("Clipboard copy failed:", e);
+        }
+      }
+
       if (newWindow) {
         newWindow.location.href = targetUrl;
       } else {
@@ -196,19 +212,44 @@ export function InsightPanel({ complaint, onClose, onStatusUpdate }: InsightPane
           </Button>
 
           {docUrl && (
-            <div className="mt-4 bg-green-950/40 border border-green-800 rounded-xl p-3 flex flex-col gap-2 animate-fade-in text-left">
+            <div className="mt-4 bg-[#111927] border border-white/10 rounded-2xl p-4 flex flex-col gap-3 animate-fade-in text-left">
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
-                <span className="text-xs text-green-300 font-bold">{t('proposal_success')}</span>
+                <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <span className="text-xs text-emerald-300 font-black tracking-tight">{t('proposal_success')}</span>
               </div>
-              <a 
-                href={docUrl} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-xs font-bold text-blue-400 underline hover:text-blue-300 ml-6 block"
-              >
-                {t('open_google_doc')}
-              </a>
+              
+              <div className="flex gap-2">
+                <a 
+                  href={docUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex-1 bg-jan-coral hover:bg-red-500 text-white text-center py-2 px-3 rounded-lg text-[10px] font-black transition-all cursor-pointer shadow shadow-jan-coral/10 uppercase tracking-wider block"
+                >
+                  📄 {t('open_google_doc')}
+                </a>
+                
+                {proposalMarkdown && (
+                  <button
+                    onClick={async () => {
+                      await navigator.clipboard.writeText(proposalMarkdown);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 3000);
+                    }}
+                    className="flex-1 bg-white/5 hover:bg-white/10 text-white py-2 px-3 rounded-lg text-[10px] font-black transition-all cursor-pointer border border-white/10 uppercase tracking-wider block"
+                  >
+                    {copied ? '✅ COPIED!' : '📋 COPY PROPOSAL'}
+                  </button>
+                )}
+              </div>
+
+              {proposalMarkdown && (
+                <div className="mt-2 text-left">
+                  <span className="text-[8px] font-black text-zinc-400 uppercase tracking-wider block mb-1">PROPOSAL PREVIEW</span>
+                  <div className="max-h-[160px] overflow-y-auto bg-black/40 border border-white/5 rounded-xl p-3 text-[10px] text-zinc-300 font-medium whitespace-pre-line leading-relaxed scrollbar-thin">
+                    {proposalMarkdown}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
