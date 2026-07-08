@@ -1,5 +1,5 @@
 // JanSaath Service Worker — Offline-first strategy
-const CACHE_NAME = 'jansaath-v2';
+const CACHE_NAME = 'jansaath-v3';
 const STATIC_CACHE = [
   '/',
   '/citizen',
