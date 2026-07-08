@@ -2,7 +2,6 @@ import { useRealtimeComplaints } from '../../hooks/useRealtime';
 import { Card, CardContent } from '../ui/card';
 import { ComplaintMap } from '../shared/Map';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from 'recharts';
-import { Link } from 'react-router-dom';
 
 export function TransparencyDashboard() {
   const { complaints, loading } = useRealtimeComplaints();
@@ -40,11 +39,11 @@ export function TransparencyDashboard() {
         <div className="flex items-center gap-4">
           {/* Link to other pages */}
           <div className="flex items-center gap-2 text-xs font-bold text-zinc-400 bg-zinc-50 border border-zinc-200 px-3 py-1.5 rounded-full shadow-inner mr-2">
-            <Link to="/" className="hover:text-slate-800 transition-colors">Landing</Link>
+            <a href="/" className="hover:text-slate-800 transition-colors">Landing</a>
             <span>•</span>
-            <Link to="/?error=citizen_auth" className="hover:text-slate-800 transition-colors">Citizen ↗</Link>
+            <a href="/citizen" className="hover:text-slate-800 transition-colors">Citizen</a>
             <span>•</span>
-            <Link to="/?error=admin_auth" className="hover:text-slate-800 transition-colors">Admin ↗</Link>
+            <a href="/admin" className="hover:text-slate-800 transition-colors">Admin</a>
           </div>
 
           <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full shadow-sm">

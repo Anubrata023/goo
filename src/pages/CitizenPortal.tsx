@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Bell, ArrowRight, GitCommit, FileSpreadsheet, MapPin, Languages } from 'lucide-react';
 import { ComplaintForm } from '../components/citizen/ComplaintForm';
 import { CommunityFeed } from '../components/citizen/CommunityFeed';
@@ -9,7 +8,6 @@ import { useLanguage } from '../context/LanguageContext';
 
 export function CitizenPortal() {
   const { t, language, setLanguage } = useLanguage();
-  const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState<'home' | 'reports' | 'community' | 'profile'>('home');
   const { complaints } = useRealtimeComplaints();
   
@@ -87,11 +85,11 @@ export function CitizenPortal() {
 
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-xs font-bold text-zinc-400 bg-zinc-50 border border-zinc-200 px-3 py-1.5 rounded-full shadow-inner">
-            <button onClick={() => navigate('/')} className="hover:text-slate-800 transition-colors cursor-pointer">Landing</button>
+            <a href="/" className="hover:text-slate-800 transition-colors">Landing</a>
             <span>•</span>
-            <button onClick={() => navigate('/?error=admin_auth')} className="hover:text-slate-800 transition-colors cursor-pointer">Admin ↗</button>
+            <a href="/admin" className="hover:text-slate-800 transition-colors">Admin</a>
             <span>•</span>
-            <button onClick={() => navigate('/public')} className="hover:text-slate-800 transition-colors cursor-pointer">Public</button>
+            <a href="/public" className="hover:text-slate-800 transition-colors">Public</a>
           </div>
 
           {/* Language Selector inside Portal */}

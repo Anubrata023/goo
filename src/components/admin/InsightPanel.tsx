@@ -1,19 +1,17 @@
 import { useEffect, useState } from 'react';
 import { X, Users, CreditCard, FileText, CheckCircle } from 'lucide-react';
 import { Button } from '../ui/button';
-import { generateProposal, updateComplaintStatus } from '../../lib/api';
+import { generateProposal } from '../../lib/api';
 import { useLanguage } from '../../context/LanguageContext';
 
 interface InsightPanelProps {
   complaint: any | null;
   onClose: () => void;
-  onStatusUpdate?: (complaintId: string, newStatus: string) => void;
 }
 
-export function InsightPanel({ complaint, onClose, onStatusUpdate }: InsightPanelProps) {
+export function InsightPanel({ complaint, onClose }: InsightPanelProps) {
   const { t } = useLanguage();
   const [generating, setGenerating] = useState(false);
-  const [updatingStatus, setUpdatingStatus] = useState(false);
   const [docUrl, setDocUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -21,21 +19,6 @@ export function InsightPanel({ complaint, onClose, onStatusUpdate }: InsightPane
       setDocUrl(null);
     }
   }, [complaint]);
-
-  const handleStatusTransition = async (newStatus: string) => {
-    if (!complaint) return;
-    setUpdatingStatus(true);
-    try {
-      await updateComplaintStatus(complaint.id, newStatus);
-      if (onStatusUpdate) {
-        onStatusUpdate(complaint.id, newStatus);
-      }
-    } catch (error) {
-      console.error('Failed to update status:', error);
-    } finally {
-      setUpdatingStatus(false);
-    }
-  };
 
   const handleDraftProposal = async () => {
     if (!complaint) return;
@@ -161,7 +144,7 @@ export function InsightPanel({ complaint, onClose, onStatusUpdate }: InsightPane
         </div>
 
         {/* Action Button at the bottom (Image 2) */}
-        <div className="pt-2 space-y-4">
+        <div className="pt-2">
           <Button 
             className="w-full bg-jan-coral hover:bg-red-500 text-white font-black py-4 rounded-xl flex items-center justify-center gap-1.5 shadow-lg shadow-jan-coral/20 cursor-pointer text-xs"
             onClick={handleDraftProposal}
@@ -183,56 +166,6 @@ export function InsightPanel({ complaint, onClose, onStatusUpdate }: InsightPane
               <span className="text-xs text-green-300 font-bold">{t('proposal_success')}</span>
             </div>
           )}
-
-          {/* Workflow Action Control Status Switchers */}
-          <div className="border-t border-white/10 pt-4 mt-2 space-y-2.5">
-            <span className="text-[9px] font-black tracking-widest text-zinc-400 uppercase block mb-1">Workflow Action Control</span>
-            
-            {(complaint.status || 'new') === 'new' && (
-              <Button 
-                className="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-black py-3 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer text-xs transition-all active:scale-[0.98]"
-                onClick={() => handleStatusTransition('under_review')}
-                disabled={updatingStatus}
-              >
-                🔍 Pass for Review
-              </Button>
-            )}
-
-            {complaint.status === 'under_review' && (
-              <div className="grid grid-cols-2 gap-2">
-                <Button 
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-black py-3 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer text-xs transition-all active:scale-[0.98]"
-                  onClick={() => handleStatusTransition('funds_allocated')}
-                  disabled={updatingStatus}
-                >
-                  💰 Allocate Funds
-                </Button>
-                <Button 
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer text-xs transition-all active:scale-[0.98]"
-                  onClick={() => handleStatusTransition('resolved')}
-                  disabled={updatingStatus}
-                >
-                  ✅ Resolve Direct
-                </Button>
-              </div>
-            )}
-
-            {complaint.status === 'funds_allocated' && (
-              <Button 
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer text-xs transition-all active:scale-[0.98]"
-                onClick={() => handleStatusTransition('resolved')}
-                disabled={updatingStatus}
-              >
-                ✅ Resolve Issue
-              </Button>
-            )}
-
-            {complaint.status === 'resolved' && (
-              <div className="bg-emerald-950/40 border border-emerald-800 rounded-xl p-3 text-center">
-                <span className="text-xs text-emerald-400 font-bold">🎉 Issue is fully resolved & closed.</span>
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </div>
