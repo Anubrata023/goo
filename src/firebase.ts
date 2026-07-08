@@ -30,7 +30,9 @@ try {
 const getLocalData = (key: string): any[] => {
   try {
     const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : [];
+    if (!data) return [];
+    const parsed = JSON.parse(data);
+    return Array.isArray(parsed) ? parsed : [];
   } catch (e) {
     return [];
   }
@@ -165,36 +167,43 @@ const activeComplaintListeners = new Set<(data: any[]) => void>();
 let latestFirebaseComplaints: any[] = [];
 
 export const getMergedComplaints = (firebaseData: any[] = []) => {
-  const localList = getLocalData('local_complaints');
-  const statusOverrides = getLocalData('complaints_status_overrides');
-  const upvoteOverrides = getLocalData('complaints_upvote_overrides');
-  
-  // Map of id -> status
-  const statusMap = new Map(statusOverrides.map(item => [item.id, item.status]));
-  // Map of id -> upvote count
-  const upvoteMap = new Map(upvoteOverrides.map(item => [item.id, item.count]));
+  try {
+    const localList = getLocalData('local_complaints');
+    const statusOverrides = getLocalData('complaints_status_overrides');
+    const upvoteOverrides = getLocalData('complaints_upvote_overrides');
+    
+    // Safety check arrays
+    const safeStatusOverrides = Array.isArray(statusOverrides) ? statusOverrides : [];
+    const safeUpvoteOverrides = Array.isArray(upvoteOverrides) ? upvoteOverrides : [];
 
-  // If Firebase data is empty/not loaded, use mockDemoComplaints as baseline
-  const baseData = firebaseData.length === 0 ? mockDemoComplaints : firebaseData;
+    const statusMap = new Map(safeStatusOverrides.map(item => [item?.id, item?.status]));
+    const upvoteMap = new Map(safeUpvoteOverrides.map(item => [item?.id, item?.count]));
 
-  const merged = [...baseData, ...localList];
-  const uniqueMap = new Map<string, any>();
+    // If Firebase data is empty/not loaded, use mockDemoComplaints as baseline
+    const baseData = firebaseData.length === 0 ? mockDemoComplaints : firebaseData;
 
-  merged.forEach(c => {
-    if (c && c.id) {
-      const copy = { ...c };
-      // Apply local status and upvote overrides if present
-      if (statusMap.has(copy.id)) {
-        copy.status = statusMap.get(copy.id);
+    const merged = [...baseData, ...localList];
+    const uniqueMap = new Map<string, any>();
+
+    merged.forEach(c => {
+      if (c && c.id) {
+        const copy = { ...c };
+        // Apply local status and upvote overrides if present
+        if (statusMap.has(copy.id)) {
+          copy.status = statusMap.get(copy.id);
+        }
+        if (upvoteMap.has(copy.id)) {
+          copy.upvotes = upvoteMap.get(copy.id);
+        }
+        uniqueMap.set(copy.id, copy);
       }
-      if (upvoteMap.has(copy.id)) {
-        copy.upvotes = upvoteMap.get(copy.id);
-      }
-      uniqueMap.set(copy.id, copy);
-    }
-  });
+    });
 
-  return Array.from(uniqueMap.values());
+    return Array.from(uniqueMap.values());
+  } catch (e) {
+    console.error("Error in getMergedComplaints:", e);
+    return mockDemoComplaints;
+  }
 };
 
 const notifyComplaintListeners = () => {

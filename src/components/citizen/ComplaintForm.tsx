@@ -136,24 +136,28 @@ export function ComplaintForm({ type: _type, onSubmitted, onClose }: { type?: 't
         }
       };
       
-      await addComplaintToFeed({
-        id: simulatedResponse.id,
-        ward: ward,
-        city: cityName,
-        district: district,
-        state: stateName,
-        status: 'new',
-        raw_text: description,
-        category: activeCategory,
-        timestamp: Date.now(),
-        is_duplicate: false,
-        cluster_size: 1,
-        upvotes: 0,
-        days_open: 1,
-        created_at: new Date().toISOString(),
-        priority_score: simulatedResponse.analysis.priority_score,
-        summary_en: description
-      });
+      try {
+        await addComplaintToFeed({
+          id: simulatedResponse.id,
+          ward: ward,
+          city: cityName,
+          district: district,
+          state: stateName,
+          status: 'new',
+          raw_text: description,
+          category: activeCategory,
+          timestamp: Date.now(),
+          is_duplicate: false,
+          cluster_size: 1,
+          upvotes: 0,
+          days_open: 1,
+          created_at: new Date().toISOString(),
+          priority_score: simulatedResponse.analysis.priority_score,
+          summary_en: description
+        });
+      } catch (feedErr) {
+        console.error("Local feed write failed:", feedErr);
+      }
 
       setSuccessResult(simulatedResponse);
       if (onSubmitted) onSubmitted();
