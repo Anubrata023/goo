@@ -2,10 +2,20 @@ import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { MessageSquare } from 'lucide-react';
+import { updateComplaintStatusInFirebase } from '../../firebase';
 
 export function SortableComplaintCard({ complaint, onClick }: any) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: complaint.id });
   const style = { transform: CSS.Transform.toString(transform), transition };
+
+  const handleQuickStatusChange = async (e: React.MouseEvent, newStatus: string) => {
+    e.stopPropagation();
+    try {
+      await updateComplaintStatusInFirebase(complaint.id, newStatus);
+    } catch (err) {
+      console.error(err);
+    }
+  };
   
   const score = complaint.priority_score || 50;
   const isCritical = score >= 70;
@@ -59,6 +69,50 @@ export function SortableComplaintCard({ complaint, onClick }: any) {
         <span className="text-xs font-bold px-1 select-none">⠿</span>
       </div>
  
+      {/* Quick Action Buttons on Card */}
+      <div className="mt-3 pt-2 border-t border-white/5 flex gap-2 flex-wrap">
+        {(complaint.status || 'new') === 'new' && (
+          <button 
+            onClick={(e) => handleQuickStatusChange(e, 'under_review')}
+            className="flex-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-[10px] font-black py-1.5 px-2 rounded-lg border border-amber-500/20 cursor-pointer active:scale-95 transition-all"
+          >
+            🔍 Review
+          </button>
+        )}
+
+        {complaint.status === 'under_review' && (
+          <>
+            <button 
+              onClick={(e) => handleQuickStatusChange(e, 'funds_allocated')}
+              className="flex-1 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 text-[10px] font-black py-1.5 px-2 rounded-lg border border-purple-500/20 cursor-pointer active:scale-95 transition-all"
+            >
+              💰 Fund
+            </button>
+            <button 
+              onClick={(e) => handleQuickStatusChange(e, 'resolved')}
+              className="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[10px] font-black py-1.5 px-2 rounded-lg border border-emerald-500/20 cursor-pointer active:scale-95 transition-all"
+            >
+              ✅ Resolve
+            </button>
+          </>
+        )}
+
+        {complaint.status === 'funds_allocated' && (
+          <button 
+            onClick={(e) => handleQuickStatusChange(e, 'resolved')}
+            className="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[10px] font-black py-1.5 px-2 rounded-lg border border-emerald-500/20 cursor-pointer active:scale-95 transition-all"
+          >
+            ✅ Resolve
+          </button>
+        )}
+
+        {complaint.status === 'resolved' && (
+          <div className="w-full text-center text-emerald-500/80 bg-emerald-500/5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider border border-emerald-500/10">
+            🎉 Closed
+          </div>
+        )}
+      </div>
+
       {/* Card Footer */}
       <div className="flex justify-between items-center pt-3 border-t border-white/5 mt-3">
         {/* Small avatar or mock tag */}

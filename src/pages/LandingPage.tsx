@@ -4,7 +4,7 @@ import { Mic, Map, TrendingUp, Languages, User, ShieldAlert, Lock, X } from 'luc
 import { useLanguage } from '../context/LanguageContext';
 
 export function LandingPage() {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -62,34 +62,25 @@ export function LandingPage() {
   const capabilities = [
     {
       icon: <Mic className="w-6 h-6 text-red-600" />,
-      title: 'Voice-First Intake',
-      titleHi: 'आवाज-प्रथम इनटेक',
-      description: 'Removing literacy barriers by transcribing local dialects and speech instantly via multilingual AI, ensuring every voice is captured accurately.',
-      descriptionHi: 'बहुभाषी एआई के माध्यम से स्थानीय बोलियों और भाषणों को तुरंत ट्रांसक्राइब करके साक्षरता बाधाओं को दूर करना, यह सुनिश्चित करना कि हर आवाज सही ढंग से दर्ज हो।',
-      linkText: 'Learn More →',
-      linkTextHi: 'और जानें →',
+      titleKey: 'cap_voice_title',
+      descKey: 'cap_voice_desc',
+      linkKey: 'cap_voice_link',
       color: 'bg-red-50 border-red-100',
       iconBg: 'bg-red-100'
     },
     {
       icon: <Map className="w-6 h-6 text-amber-600" />,
-      title: 'Geospatial Verification',
-      titleHi: 'जियोस्पेशियल सत्यापन',
-      description: 'Mapping regional needs using precision satellite and open-source data to verify development milestones and infrastructure requirements.',
-      descriptionHi: 'विकास के मील के पत्थर और बुनियादी ढांचे की आवश्यकताओं को सत्यापित करने के लिए सटीक उपग्रह और ओपन-सोर्स डेटा का उपयोग करके क्षेत्रीय आवश्यकताओं का मानचित्रण करना।',
-      linkText: 'View Map Demo →',
-      linkTextHi: 'मानचित्र डेमो देखें →',
+      titleKey: 'cap_geo_title',
+      descKey: 'cap_geo_desc',
+      linkKey: 'cap_geo_link',
       color: 'bg-amber-50 border-amber-100',
       iconBg: 'bg-amber-100'
     },
     {
       icon: <TrendingUp className="w-6 h-6 text-emerald-600" />,
-      title: 'Predictive Governance',
-      titleHi: 'पूर्वानुमानित शासन',
-      description: 'Forecasting future infrastructure needs and resource allocation automatically using deep-learning models trained on community feedback.',
-      descriptionHi: 'सामुदायिक प्रतिक्रिया पर प्रशिक्षित डीप-लर्निंग... और संसाधन आवंटन का स्वचालित रूप से पूर्वानुमान लगाना।',
-      linkText: 'Explore AI Insights →',
-      linkTextHi: 'एआई अंतर्दृष्टि का अन्वेषण करें →',
+      titleKey: 'cap_pred_title',
+      descKey: 'cap_pred_desc',
+      linkKey: 'cap_pred_link',
       color: 'bg-emerald-50 border-emerald-100',
       iconBg: 'bg-emerald-100'
     }
@@ -117,7 +108,7 @@ export function LandingPage() {
               <select 
                 value={language}
                 onChange={(e) => toggleLanguage(e.target.value as any)}
-                className="bg-transparent text-xs font-bold focus:outline-none cursor-pointer border-none text-white appearance-none"
+                className="bg-transparent text-xs font-bold focus:outline-none cursor-pointer border-none text-white appearance-none animate-none"
                 style={{ WebkitAppearance: 'none' }}
               >
                 <option value="en" className="text-slate-800 font-bold">English</option>
@@ -136,7 +127,7 @@ export function LandingPage() {
               }}
               className="bg-jan-coral hover:bg-red-500 text-white font-bold text-xs px-5 py-2.5 rounded-full shadow-lg transition-all active:scale-95 cursor-pointer"
             >
-              Citizen Login
+              {t('citizen_login')}
             </button>
             <button 
               onClick={() => {
@@ -145,15 +136,15 @@ export function LandingPage() {
               }}
               className="bg-white/10 hover:bg-white/20 text-white font-bold text-xs px-5 py-2.5 border border-white/30 rounded-full shadow-lg transition-all active:scale-95 cursor-pointer"
             >
-              Admin Login
+              {t('admin_login')}
             </button>
           </div>
         </header>
 
         {/* Hero Body */}
         <div className="w-full max-w-7xl mx-auto flex-1 flex flex-col justify-center items-start text-white z-10 mt-8">
-          <h1 className="text-5xl md:text-7xl font-black tracking-tight leading-none max-w-3xl">
-            Raise Your Voice. Track Progress.
+          <h1 className="text-5xl md:text-7xl font-black tracking-tight leading-none max-w-3xl text-left">
+            {language === 'hi' ? 'अपनी आवाज़ उठाएं। प्रगति ट्रैक करें।' : 'Raise Your Voice. Track Progress.'}
           </h1>
           <div className="flex gap-4 mt-8 flex-wrap">
             <button 
@@ -163,7 +154,7 @@ export function LandingPage() {
               }}
               className="bg-jan-coral hover:bg-red-500 text-white font-black text-sm px-8 py-4 rounded-full flex items-center gap-2 shadow-xl shadow-jan-coral/30 hover:scale-105 active:scale-95 transition-all cursor-pointer"
             >
-              <span>Citizen Portal ▷</span>
+              <span>{t('citizen_portal_btn')}</span>
             </button>
             <button 
               onClick={() => {
@@ -172,21 +163,21 @@ export function LandingPage() {
               }}
               className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-black text-sm px-8 py-4 rounded-full flex items-center gap-2 shadow-xl hover:scale-105 active:scale-95 transition-all cursor-pointer"
             >
-              <span>Admin Center 🛡️</span>
+              <span>{t('admin_center_btn')}</span>
             </button>
           </div>
         </div>
 
         {/* Capabilities Subtitle overlay */}
-        <div className="w-full max-w-7xl mx-auto z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mt-6">
+        <div className="w-full max-w-7xl mx-auto z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mt-6 text-left">
           <div className="flex flex-col">
             <span className="text-[10px] font-black uppercase tracking-widest text-zinc-300">OUR CAPABILITIES</span>
             <h2 className="text-xl md:text-3xl font-black text-white mt-1">
-              The Intelligence Layer for Your Constituency
+              {t('capabilities_title')}
             </h2>
           </div>
           <p className="text-zinc-200 text-sm max-w-md font-medium leading-relaxed">
-            Utilizing state-of-the-art AI to transform raw local feedback into actionable development insights.
+            {t('capabilities_desc')}
           </p>
         </div>
       </div>
@@ -196,17 +187,17 @@ export function LandingPage() {
         {capabilities.map((cap, i) => (
           <div 
             key={i} 
-            className={`p-8 rounded-3xl border ${cap.color} bg-white shadow-sm flex flex-col justify-between items-start h-[280px] transition-all hover:shadow-md hover:scale-[1.01]`}
+            className="p-8 rounded-3xl border border-zinc-150 bg-white shadow-sm flex flex-col justify-between items-start h-[280px] transition-all hover:shadow-md hover:scale-[1.01]"
           >
             <div className="space-y-4">
               <div className={`p-3 rounded-2xl ${cap.iconBg} inline-flex`}>
                 {cap.icon}
               </div>
-              <h3 className="text-xl font-black text-slate-800">
-                {language === 'hi' ? cap.titleHi : cap.title}
+              <h3 className="text-xl font-black text-slate-800 text-left">
+                {t(cap.titleKey as any)}
               </h3>
-              <p className="text-zinc-600 text-xs font-medium leading-relaxed line-clamp-4">
-                {language === 'hi' ? cap.descriptionHi : cap.description}
+              <p className="text-zinc-600 text-xs font-medium leading-relaxed line-clamp-4 text-left">
+                {t(cap.descKey as any)}
               </p>
             </div>
             <button 
@@ -216,7 +207,7 @@ export function LandingPage() {
               }}
               className="text-xs font-black text-jan-coral hover:underline mt-4 flex items-center cursor-pointer"
             >
-              {language === 'hi' ? cap.linkTextHi : cap.linkText}
+              {t(cap.linkKey as any)}
             </button>
           </div>
         ))}

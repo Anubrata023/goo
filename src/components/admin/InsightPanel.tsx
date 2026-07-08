@@ -42,20 +42,36 @@ export function InsightPanel({ complaint, onClose, onStatusUpdate }: InsightPane
     if (!complaint) return;
     setGenerating(true);
     const mockUrl = `https://docs.google.com/document/d/1mock-${complaint.id}/edit`;
+    
+    // Open blank tab synchronously to prevent popup blocker interception
+    const newWindow = window.open('about:blank', '_blank');
+    if (newWindow) {
+      newWindow.document.write(`
+        <html>
+          <body style="font-family:sans-serif; text-align:center; padding-top:20%; background:#090d16; color:#ffffff;">
+            <h3>Generating Official Proposal...</h3>
+            <p style="color:#a1a1aa; font-size:12px;">Gemini AI is constructing the Google Docs draft. Please wait.</p>
+          </body>
+        </html>
+      `);
+    }
+
     try {
       const result = await generateProposal(complaint.id);
       const targetUrl = (result.proposal && result.proposal.doc_url) ? result.proposal.doc_url : mockUrl;
       setDocUrl(targetUrl);
-      const newWindow = window.open(targetUrl, '_blank');
-      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-        alert("Popup blocker active! You can click the Google Doc draft link in the green box below.");
+      if (newWindow) {
+        newWindow.location.href = targetUrl;
+      } else {
+        window.open(targetUrl, '_blank');
       }
     } catch (error) {
       console.error(error);
       setDocUrl(mockUrl);
-      const newWindow = window.open(mockUrl, '_blank');
-      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-        alert("Popup blocker active! You can click the Google Doc draft link in the green box below.");
+      if (newWindow) {
+        newWindow.location.href = mockUrl;
+      } else {
+        window.open(mockUrl, '_blank');
       }
     } finally {
       setGenerating(false);
