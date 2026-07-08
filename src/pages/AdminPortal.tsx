@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bell, Settings, Languages } from 'lucide-react';
 import { AdminDashboard } from '../components/admin/AdminDashboard';
 import { ComplaintMap } from '../components/shared/Map';
@@ -7,6 +8,7 @@ import { useLanguage } from '../context/LanguageContext';
 
 export function AdminPortal() {
   const { t, language, setLanguage } = useLanguage();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'geospatial' | 'insights' | 'audit'>('dashboard');
   const { complaints } = useRealtimeComplaints();
 
@@ -62,11 +64,11 @@ export function AdminPortal() {
         <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto">
           {/* Navigation link tags */}
           <div className="flex items-center gap-2 text-xs font-bold text-zinc-500 bg-white/5 border border-white/5 px-3 py-1.5 rounded-full shadow-inner">
-            <a href="/" className="hover:text-white transition-colors">Landing</a>
+            <button onClick={() => navigate('/')} className="hover:text-white transition-colors cursor-pointer">Landing</button>
             <span>•</span>
-            <a href="/citizen" className="hover:text-white transition-colors">Citizen</a>
+            <button onClick={() => navigate('/?error=citizen_auth')} className="hover:text-white transition-colors cursor-pointer">Citizen ↗</button>
             <span>•</span>
-            <a href="/public" className="hover:text-white transition-colors">Public</a>
+            <button onClick={() => navigate('/public')} className="hover:text-white transition-colors cursor-pointer">Public</button>
           </div>
 
           {/* Language Selector inside Admin Portal */}
