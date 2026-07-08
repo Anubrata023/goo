@@ -92,6 +92,26 @@ export function ComplaintForm({ type: _type, onSubmitted, onClose }: { type?: 't
         });
       }
 
+      // Resolve latitude and longitude based on the selected ward for map plotting
+      const wardMapCoords: Record<string, { lat: number; lng: number }> = {
+        'Chinhat': { lat: 26.8667, lng: 80.9962 },
+        'Kakori': { lat: 26.8710, lng: 80.7811 },
+        'Sarojini Nagar': { lat: 26.7812, lng: 80.8920 },
+        'Alambagh': { lat: 26.8115, lng: 80.9124 }
+      };
+      
+      const selectedWardKey = Object.keys(wardMapCoords).find(
+        w => w.toLowerCase() === ward.trim().toLowerCase()
+      ) || '';
+      
+      const lat = selectedWardKey 
+        ? wardMapCoords[selectedWardKey].lat 
+        : 26.8467 + (Math.random() - 0.5) * 0.04;
+        
+      const lng = selectedWardKey 
+        ? wardMapCoords[selectedWardKey].lng 
+        : 80.9462 + (Math.random() - 0.5) * 0.04;
+
       // Add to Firebase real-time database
       await addComplaintToFeed({
         id: response.id || `JS-${Date.now()}`,
@@ -109,7 +129,9 @@ export function ComplaintForm({ type: _type, onSubmitted, onClose }: { type?: 't
         days_open: 1,
         created_at: new Date().toISOString(),
         priority_score: response.analysis?.priority_score || 55,
-        summary_en: response.analysis?.summary_en || description
+        summary_en: response.analysis?.summary_en || description,
+        lat: lat,
+        lng: lng
       });
 
       setSuccessResult({
@@ -135,6 +157,26 @@ export function ComplaintForm({ type: _type, onSubmitted, onClose }: { type?: 't
           priority_score: photo ? 85 : 55
         }
       };
+
+      // Resolve coordinates inside catch block too
+      const wardMapCoords: Record<string, { lat: number; lng: number }> = {
+        'Chinhat': { lat: 26.8667, lng: 80.9962 },
+        'Kakori': { lat: 26.8710, lng: 80.7811 },
+        'Sarojini Nagar': { lat: 26.7812, lng: 80.8920 },
+        'Alambagh': { lat: 26.8115, lng: 80.9124 }
+      };
+      
+      const selectedWardKey = Object.keys(wardMapCoords).find(
+        w => w.toLowerCase() === ward.trim().toLowerCase()
+      ) || '';
+      
+      const lat = selectedWardKey 
+        ? wardMapCoords[selectedWardKey].lat 
+        : 26.8467 + (Math.random() - 0.5) * 0.04;
+        
+      const lng = selectedWardKey 
+        ? wardMapCoords[selectedWardKey].lng 
+        : 80.9462 + (Math.random() - 0.5) * 0.04;
       
       try {
         await addComplaintToFeed({
@@ -153,7 +195,9 @@ export function ComplaintForm({ type: _type, onSubmitted, onClose }: { type?: 't
           days_open: 1,
           created_at: new Date().toISOString(),
           priority_score: simulatedResponse.analysis.priority_score,
-          summary_en: description
+          summary_en: description,
+          lat: lat,
+          lng: lng
         });
       } catch (feedErr) {
         console.error("Local feed write failed:", feedErr);
