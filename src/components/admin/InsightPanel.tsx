@@ -216,22 +216,18 @@ The Member of Parliament's Office is requested to approve the budget of ${cost} 
         </div>
 
         {/* Map Thumbnail with label overlay (Image 2) */}
-        <div className="border border-white/5 bg-[#141b2b] rounded-3xl overflow-hidden relative group">
+        <div className="border border-white/5 bg-[#141b2b] rounded-3xl overflow-hidden relative">
           <div className="h-44 bg-zinc-950/70 relative">
-            <img 
-              src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=400&auto=format&fit=crop" 
-              alt="Geospatial Map" 
-              className="w-full h-full object-cover opacity-60 filter grayscale group-hover:scale-105 transition-transform duration-300"
+            <iframe 
+              src={`https://maps.google.com/maps?q=${complaint.lat || 26.8467},${complaint.lng || 80.9462}&t=k&z=16&output=embed&iwloc=near`}
+              className="w-full h-full border-none opacity-80 grayscale invert contrast-125"
+              loading="lazy"
+              title="Geospatial Map"
             />
-            {/* Geo Pin */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center">
-              <span className="absolute w-4 h-4 bg-jan-coral/30 rounded-full animate-ping"></span>
-              <span className="w-2.5 h-2.5 bg-jan-coral rounded-full shadow-lg shadow-jan-coral/50"></span>
-            </div>
             {/* Zone Tag Overlay (Image 2) */}
-            <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/5">
+            <div className="absolute bottom-3 left-3 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/5 z-10 pointer-events-none">
               <p className="text-[9px] font-black text-white uppercase tracking-wider flex items-center gap-1.5 font-bold">
-                <span>📍</span> Zone 4A - Geo Intelligence
+                <span>📍</span> Lat: {complaint.lat ? complaint.lat.toFixed(4) : '26.8467'}, Lng: {complaint.lng ? complaint.lng.toFixed(4) : '80.9462'}
               </p>
             </div>
           </div>
