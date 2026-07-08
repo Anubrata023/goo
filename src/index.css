@@ -1,6 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-jan-navy: #1A1F2C;
+  --color-jan-coral: #FF4D5A;
+  --color-jan-canvas: #F4F6FA;
+  --color-jan-slate: #0D1424;
+}
 
 body {
   background-color: #F4F6FA;
