@@ -1,10 +1,9 @@
-// src/components/shared/Map.tsx
-import React from 'react';
 import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import type { LatLngExpression } from 'leaflet';
 
-// 👇 FIX: Leaflet sometimes loses its default map pin icons in React. This code fixes that bug permanently.
+// Fix Leaflet default icon issues in React
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
@@ -12,57 +11,73 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
-// 👇 This defines what information the map expects to receive (an array of complaints)
 interface MapProps {
   complaints: any[];
+  center?: LatLngExpression;
+  zoom?: number;
+  onMarkerClick?: (complaint: any) => void;
 }
 
-export function ComplaintMap({ complaints }: MapProps) {
-  // We center the map on Lucknow coordinates (Latitude: 26.8467, Longitude: 80.9462)
-  const centerCoords: [number, number] = [26.8467, 80.9462];
+// Bypassing React 19 & react-leaflet typings incompatibility via casting
+const MapContainerAny = MapContainer as any;
+const TileLayerAny = TileLayer as any;
+const CircleMarkerAny = CircleMarker as any;
+const PopupAny = Popup as any;
 
+export function ComplaintMap({ complaints, center = [26.8467, 80.9462], zoom = 12, onMarkerClick }: MapProps) {
   return (
-    <div className="w-full h-[500px] rounded-3xl overflow-hidden shadow-xl border border-zinc-200 mt-8">
-      {/* MapContainer is the actual map window. We set the zoom level to 12. */}
-      <MapContainer center={centerCoords} zoom={12} style={{ height: '100%', width: '100%' }}>
-        
-        {/* TileLayer is the background imagery. This specific URL pulls from the free OpenStreetMap servers! */}
-        <TileLayer
+    <div className="w-full h-[500px] rounded-3xl overflow-hidden shadow-xl border border-zinc-200 mt-8 relative z-10">
+      <MapContainerAny center={center} zoom={zoom} style={{ height: '100%', width: '100%' }}>
+        {/* OpenStreetMap tile layer */}
+        <TileLayerAny
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
 
-        {/* We loop through every complaint and draw a colored circle on the map for it */}
         {complaints.map((complaint, index) => {
-          // Because our dummy data doesn't have GPS coordinates yet, we generate slight random offsets around Lucknow so you can see them!
-          const lat = complaint.lat || 26.8467 + (Math.random() - 0.5) * 0.05;
-          const lng = complaint.lng || 80.9462 + (Math.random() - 0.5) * 0.05;
+          // If complaint doesn't have exact lat/lng, jitter around Lucknow
+          const lat = complaint.lat || 26.8467 + (Math.sin(index * 13) * 0.04);
+          const lng = complaint.lng || 80.9462 + (Math.cos(index * 17) * 0.04);
           
-          // Determine the color of the dot based on the Priority Score
           const priority = complaint.priority_score || 50;
-          const dotColor = priority > 70 ? '#FF4D5A' : priority > 40 ? '#FFAC1C' : '#22C55E';
+          const color = priority > 70 ? '#ef4444' : priority > 40 ? '#f59e0b' : '#22c55e';
+          const radius = Math.min((complaint.cluster_size || 1) * 3 + 8, 25);
 
           return (
-            <CircleMarker
+            <CircleMarkerAny
               key={complaint.id || index}
               center={[lat, lng]}
-              radius={12}
-              fillColor={dotColor}
-              color={dotColor}
+              radius={radius}
+              fillColor={color}
+              color={color}
               weight={2}
-              fillOpacity={0.8}
+              opacity={1}
+              fillOpacity={0.7}
+              eventHandlers={{
+                click: () => onMarkerClick && onMarkerClick(complaint),
+              }}
             >
-              {/* Popup is the little speech bubble that appears when you click a dot */}
-              <Popup>
-                <div className="font-sans">
-                  <p className="font-bold text-slate-800">{complaint.ward || 'General Area'}</p>
-                  <p className="text-xs text-slate-600 mt-1">Priority Score: {priority}/100</p>
+              <PopupAny>
+                <div className="max-w-xs font-sans text-slate-800">
+                  <p className="font-bold text-slate-800">{complaint.category || 'Other'}</p>
+                  <p className="text-xs text-slate-600 mt-1">{complaint.summary_en || complaint.raw_text}</p>
+                  <div className="flex gap-2 mt-2">
+                    <span className="text-[10px] font-bold text-white bg-jan-slate px-1.5 py-0.5 rounded">
+                      Priority: {priority}/100
+                    </span>
+                    <span className="text-[10px] font-bold text-zinc-500 bg-zinc-100 px-1.5 py-0.5 rounded">
+                      {complaint.ward}
+                    </span>
+                  </div>
+                  {complaint.is_duplicate && (
+                    <p className="text-[10px] text-orange-500 font-bold mt-2">🔄 Merged with {complaint.cluster_size} reports</p>
+                  )}
                 </div>
-              </Popup>
-            </CircleMarker>
+              </PopupAny>
+            </CircleMarkerAny>
           );
         })}
-      </MapContainer>
+      </MapContainerAny>
     </div>
   );
 }

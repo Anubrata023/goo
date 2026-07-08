@@ -1,6 +1,6 @@
 // src/firebase.ts
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, onValue, set, push } from "firebase/database";
+import { getDatabase, ref, onValue, set, push, get } from "firebase/database";
 import { getAuth } from "firebase/auth";
 
 // These keys pull from your .env file
@@ -17,6 +17,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
 export const auth = getAuth(app);
+
+// Helper: Write complaint to Firebase (for real-time feed)
+export const addComplaintToFeed = async (complaint: any) => {
+  const newRef = push(ref(db, 'complaints'));
+  await set(newRef, {
+    ...complaint,
+    upvotes: 0,
+    timestamp: Date.now()
+  });
+  return newRef.key;
+};
 
 // Helper: Listen to complaints in real-time
 export const listenToComplaints = (callback: (data: any) => void) => {
@@ -39,9 +50,9 @@ export const listenToComplaints = (callback: (data: any) => void) => {
 export const upvoteComplaint = async (complaintId: string) => {
   const upvoteRef = ref(db, `complaints/${complaintId}/upvotes`);
   try {
-    // In a real app, we'd use a transaction here, but this works for our prototype
-    const currentScore = 0; // Simplified for the mockup phase
-    await set(upvoteRef, currentScore + 1);
+    const snapshot = await get(upvoteRef);
+    const current = snapshot.val() || 0;
+    await set(upvoteRef, current + 1);
   } catch (error) {
     console.error('Upvote failed:', error);
   }

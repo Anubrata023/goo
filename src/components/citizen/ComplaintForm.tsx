@@ -1,84 +1,142 @@
-// src/components/citizen/ComplaintForm.tsx
 import React, { useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Textarea } from '../ui/textarea';
+import { Input } from '../ui/input';
+import { Card, CardContent } from '../ui/card';
+import { X, Loader2 } from 'lucide-react';
+import { submitTextComplaint, submitPhotoComplaint } from '../../lib/api';
+import { addComplaintToFeed } from '../../firebase';
 import { useLanguage } from '../../context/LanguageContext';
 
-export function ComplaintForm() {
-  const { t } = useLanguage();
-  const [ward, setWard] = useState('');
-  const [description, setDescription] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+interface ComplaintFormProps {
+  type: 'text' | 'photo';
+  onClose: () => void;
+}
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
+export function ComplaintForm({ type, onClose }: ComplaintFormProps) {
+  const { t } = useLanguage();
+  const [text, setText] = useState('');
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [ward, setWard] = useState('Chinhat');
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
 
-    // Form data packaging structure transmitted directly to Person A's API router node
-    const formData = { text: description, ward: ward };
-    console.log("Transmitting state payload package to endpoint layer:", formData);
+    try {
+      let response;
+      if (type === 'text') {
+        response = await submitTextComplaint({ text, ward });
+      } else if (type === 'photo' && photo) {
+        response = await submitPhotoComplaint(photo, ward);
+      } else {
+        throw new Error('Please select a photo file');
+      }
 
-    setTimeout(() => {
+      // Add to Firebase feed (real-time)
+      await addComplaintToFeed({
+        ...response.analysis,
+        ward,
+        status: 'new',
+        raw_text: text || 'Photo complaint',
+      });
+
+      setResult(response);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.response?.data?.detail || err.message || 'Submission failed');
+    } finally {
       setLoading(false);
-      setSuccess(true);
-    }, 1200);
+    }
   };
 
-  if (success) {
+  if (result) {
     return (
-      <div className="bg-white p-8 rounded-2xl shadow-xl border border-zinc-200 text-center max-w-md mx-auto mt-12 animate-fade-in">
-        <h3 className="text-2xl font-bold text-emerald-600 mb-2">✅ {t('submitted')}</h3>
-        <p className="text-zinc-500 text-sm">Your issue has been logged. The computational agent graph has initiated automated prioritization triage routines.</p>
-        <button 
-          onClick={() => { setSuccess(false); setDescription(''); setWard(''); }}
-          className="mt-6 w-full bg-jan-slate text-white font-bold py-3 rounded-xl active:scale-95 transition-transform"
-        >
-          File Another Report
-        </button>
-      </div>
+      <Card className="mt-4">
+        <CardContent className="p-6">
+          <h3 className="text-lg font-semibold text-green-600 mb-4 flex items-center gap-2">
+            <span>✅</span> {t('submitted')}
+          </h3>
+          <div className="space-y-2 text-sm text-slate-700">
+            <p><strong>{t('category')}:</strong> {result.analysis.category}</p>
+            <p><strong>{t('severity')}:</strong> {result.analysis.severity}/10</p>
+            <p><strong>{t('summary')}:</strong> {result.analysis.summary_en}</p>
+            <p><strong>{t('priority_score')}:</strong> {result.analysis.priority_score}/100</p>
+          </div>
+          <Button onClick={onClose} className="mt-6 w-full">{t('done')}</Button>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white p-8 rounded-3xl shadow-xl border border-zinc-100 max-w-xl mx-auto mt-12">
-      <form onSubmit={handleFormSubmit} className="space-y-6">
-        <div>
-          <label className="block text-xs font-black uppercase text-zinc-500 tracking-wider mb-2">{t('ward_label')}</label>
-          <input 
-            type="text" 
-            required
-            className="w-full bg-jan-canvas p-4 rounded-xl border border-transparent focus:ring-2 focus:ring-jan-coral outline-none text-jan-slate font-medium transition-all"
-            placeholder="e.g. Ward 12, Indiranagar"
-            value={ward}
-            onChange={(e) => setWard(e.target.value)}
-          />
+    <Card className="mt-4 border-jan-coral bg-white shadow-xl">
+      <CardContent className="p-6">
+        <div className="flex justify-between items-center mb-4 pb-2 border-b border-zinc-100">
+          <h3 className="text-lg font-bold text-slate-800">
+            {type === 'text' ? t('text_complaint') : t('upload_photo')}
+          </h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-zinc-100 transition-colors">
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
-        <div>
-          <label className="block text-xs font-black uppercase text-zinc-500 tracking-wider mb-2">{t('desc_label')}</label>
-          <textarea 
-            required
-            rows={5}
-            className="w-full bg-jan-canvas p-4 rounded-xl border border-transparent focus:ring-2 focus:ring-jan-coral outline-none text-jan-slate text-sm leading-relaxed transition-all resize-none"
-            placeholder="Describe the issue in your own words (e.g., 'The streetlights have been broken for two days'). Our AI will automatically categorize, translate, and prioritize your report."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {type === 'text' && (
+            <div>
+              <label className="block text-xs font-black uppercase text-zinc-500 tracking-wider mb-1.5">{t('desc_label')}</label>
+              <Textarea
+                placeholder={t('describe_problem')}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                className="min-h-[120px] mb-2"
+                required
+              />
+            </div>
+          )}
 
-        <button 
-          type="submit" 
-          disabled={loading || !description.trim() || !ward.trim()}
-          className="w-full bg-jan-coral hover:bg-red-500 text-white font-bold py-4 rounded-xl tracking-wide transition-all active:scale-[0.98] flex items-center justify-center disabled:opacity-40 shadow-lg shadow-jan-coral/20"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-              {t('submitting')}
-            </>
-          ) : t('submit')}
-        </button>
-      </form>
-    </div>
+          {type === 'photo' && (
+            <div>
+              <label className="block text-xs font-black uppercase text-zinc-500 tracking-wider mb-1.5">{t('upload_photo')}</label>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setPhoto(e.target.files?.[0] || null)}
+                className="mb-2"
+                required
+              />
+              <p className="text-xs text-gray-500 mt-1">{t('photo_hint')}</p>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-xs font-black uppercase text-zinc-500 tracking-wider mb-1.5">{t('ward_label')}</label>
+            <Input
+              placeholder={t('enter_ward')}
+              value={ward}
+              onChange={(e) => setWard(e.target.value)}
+              required
+            />
+          </div>
+
+          {error && <p className="text-red-500 text-sm mb-2 font-medium">⚠️ {error}</p>}
+
+          <Button type="submit" disabled={loading} className="w-full flex items-center justify-center">
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                {t('submitting')}
+              </>
+            ) : (
+              t('submit')
+            )}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
