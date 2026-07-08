@@ -11,23 +11,41 @@ export function AdminDashboard() {
   const { complaints, loading } = useRealtimeComplaints();
   const [selectedComplaint, setSelectedComplaint] = useState<any>(null);
   const [stats, setStats] = useState({
-    total: 2842,
-    resolved: 1905,
-    avgResolution: '4.2d',
-    satisfaction: '88%',
+    total: 0,
+    resolved: 0,
+    avgResolution: '0.0d',
+    satisfaction: '100%',
   });
 
   useEffect(() => {
-    // If we have live complaints from Firebase, we overlay them or dynamically calculate
-    if (complaints.length > 0) {
-      const resolvedCount = complaints.filter(c => c.status === 'resolved').length;
-      setStats({
-        total: Math.max(2842, complaints.length),
-        resolved: Math.max(1905, resolvedCount),
-        avgResolution: '4.2d',
-        satisfaction: '88%',
-      });
+    const total = complaints.length;
+    const resolvedList = complaints.filter(c => c.status === 'resolved');
+    const resolvedCount = resolvedList.length;
+    
+    // Calculate satisfaction based on upvote engagement (positive if upvotes >= 2)
+    const positiveCount = complaints.filter(c => (c.upvotes || 0) >= 2 || c.status === 'resolved').length;
+    const satisfactionRate = total > 0 ? Math.round((positiveCount / total) * 100) : 100;
+    
+    // Calculate average resolution time dynamically
+    let avgResText = '2.5d';
+    if (resolvedCount > 0) {
+      const totalDuration = resolvedList.reduce((acc, c) => {
+        const created = new Date(c.created_at || Date.now()).getTime();
+        const updated = c.updatedAt ? new Date(c.updatedAt).getTime() : (created + 2.5 * 24 * 60 * 60 * 1000);
+        return acc + (updated - created);
+      }, 0);
+      const avgDays = (totalDuration / resolvedCount / (1000 * 60 * 60 * 24)).toFixed(1);
+      avgResText = `${avgDays}d`;
+    } else {
+      avgResText = 'N/A';
     }
+
+    setStats({
+      total,
+      resolved: resolvedCount,
+      avgResolution: avgResText,
+      satisfaction: `${satisfactionRate}%`,
+    });
   }, [complaints]);
 
   if (loading) {
